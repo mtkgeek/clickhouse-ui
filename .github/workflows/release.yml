@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'no-release') }}
     permissions:
-      contents: write 
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -33,19 +33,19 @@ jobs:
           else
             new_tag="v1.5.1"
           fi
-          
+
           # Update package.json version (without the 'v' prefix)
           new_version="${new_tag:1}"
           npm version $new_version --no-git-tag-version
-          
+
           # Stage and commit package.json changes
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add package.json package-lock.json
           git commit -m "chore: bump version to ${new_tag}"
           git push
-          
-          # Create and push new tag
+
+          # Create and push new tag to GitHub
           git tag $new_tag
           git push origin $new_tag
           echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
@@ -68,9 +68,9 @@ jobs:
           release_name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: |
             # What's Changed
-            
+
             ${{ steps.release_notes.outputs.commits }}
-            
+
             **Full Changelog**: https://github.com/${{ github.repository }}/commits/${{ steps.tag_version.outputs.new_tag }}
           draft: false
           prerelease: false
