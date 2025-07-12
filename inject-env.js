@@ -12,7 +12,8 @@ const envVars = {
   VITE_CLICKHOUSE_USE_ADVANCED: process.env.VITE_CLICKHOUSE_USE_ADVANCED || "",
   VITE_CLICKHOUSE_CUSTOM_PATH: process.env.VITE_CLICKHOUSE_CUSTOM_PATH || "",
   VITE_CLICKHOUSE_REQUEST_TIMEOUT: process.env.VITE_CLICKHOUSE_REQUEST_TIMEOUT || 3000,
-};
+  VITE_CLICKHOUSE_BASE_URL: process.env.VITE_CLICKHOUSE_BASE_URL || "/clickhouse-ui/",
+}
 
 const scriptContent = `
 <script>
