@@ -50,7 +50,5 @@ ENV VITE_CLICKHOUSE_CUSTOM_PATH=""
 ENV VITE_CLICKHOUSE_REQUEST_TIMEOUT=30000
 ENV VITE_CLICKHOUSE_BASE_URL="/clickhouse-ui/"
 
-
-
 # Use a shell script to inject environment variables and then serve the app
 CMD ["/bin/sh", "-c", "node inject-env.js && serve -s -l 5521"]
