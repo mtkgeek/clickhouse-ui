@@ -30,10 +30,10 @@ WORKDIR /app
 RUN npm install -g serve
 
 # Copy the build directory from the first stage to the second stage
-COPY --from=build /app/dist /app/clickhouse-ui
+COPY --from=build /app/dist /app/_/clickhouse-ui
 
 # Copy a script to inject environment variables
-COPY inject-env.js /app/clickhouse-ui/inject-env.js
+COPY inject-env.js /app/_/clickhouse-ui/inject-env.js
 
 # Expose port 5521 to have it mapped by the Docker daemon
 EXPOSE 5521
@@ -51,4 +51,4 @@ RUN addgroup -S ch-group -g 1001 && adduser -S ch-user -u 1001 -G ch-group
 RUN chown -R ch-user:ch-group /app
 
 # Use a shell script to inject environment variables and then serve the app
-CMD ["/bin/sh", "-c", "node clickhouse-ui/inject-env.js && serve -l 5521"]
+CMD ["/bin/sh", "-c", "node _/clickhouse-ui/inject-env.js && serve -l 5521"]
