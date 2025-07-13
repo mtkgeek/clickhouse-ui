@@ -17,11 +17,8 @@ RUN npx update-browserslist-db@latest
 # Bundle app source inside Docker image
 COPY . .
 
-# Declare the build argument that will be passed from the docker build command
-ARG VITE_CLICKHOUSE_BASE_URL
-
-# Build the app, passing the VITE_CLICKHOUSE_BASE_URL to the build process
-RUN VITE_CLICKHOUSE_BASE_URL=${VITE_CLICKHOUSE_BASE_URL} npm run build
+# Build the app
+RUN npm run build
 
 # Use a second stage to reduce image size
 FROM node:20-alpine
@@ -33,10 +30,10 @@ WORKDIR /app
 RUN npm install -g serve
 
 # Copy the build directory from the first stage to the second stage
-COPY --from=build /app/dist /app
+COPY --from=build /app/dist /app/clickhouse-ui
 
 # Copy a script to inject environment variables
-COPY inject-env.js /app/inject-env.js
+COPY inject-env.js /app/clickhouse-ui/inject-env.js
 
 # Expose port 5521 to have it mapped by the Docker daemon
 EXPOSE 5521
@@ -48,7 +45,10 @@ ENV VITE_CLICKHOUSE_PASS=""
 ENV VITE_CLICKHOUSE_USE_ADVANCED=""
 ENV VITE_CLICKHOUSE_CUSTOM_PATH=""
 ENV VITE_CLICKHOUSE_REQUEST_TIMEOUT=30000
-ENV VITE_CLICKHOUSE_BASE_URL="/clickhouse-ui/"
+
+RUN addgroup -S ch-group -g 1001 && adduser -S ch-user -u 1001 -G ch-group
+
+RUN chown -R ch-user:ch-group /app
 
 # Use a shell script to inject environment variables and then serve the app
-CMD ["/bin/sh", "-c", "node inject-env.js && serve -s -l 5521"]
+CMD ["/bin/sh", "-c", "node clickhouse-ui/inject-env.js && serve -l 5521"]
